@@ -1,0 +1,45 @@
+# docker-compose.yml
+# Runs backend (FastAPI) + frontend (nginx static) together
+#
+# Usage:
+#   docker-compose up --build
+#
+# Frontend → http://localhost:3000
+# Backend  → http://localhost:8000
+# API Docs → http://localhost:8000/docs
+
+version: "3.9"
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: veg-ml-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount model dir so you can drop in a trained model without rebuilding
+      - ./backend/model:/app/model
+      - ./backend/sample_data:/app/sample_data
+    environment:
+      - MODEL_PATH=/app/model/rf_model.joblib
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: veg-ml-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

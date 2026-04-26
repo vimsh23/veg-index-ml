@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+venv/
+env/
+
+# Model files (train locally, upload manually to cloud)
+backend/model/rf_model.joblib
+
+# Generated sample data
+backend/sample_data/training_data.csv
+
+# Node / Vercel
+node_modules/
+.vercel/
+
+# Docker
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
