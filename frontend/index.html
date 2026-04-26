@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vegetation Index ML — Remote Sensing Tool</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     :root {
       --bg: #0f1117;
@@ -41,13 +48,31 @@
       align-items: center;
       gap: 14px;
     }
-    .logo { font-size: 22px; }
-    header h1 { font-size: 18px; font-weight: 600; }
-    header span { font-size: 12px; color: var(--text2); background: var(--surface2);
-      padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); }
+
+    .logo {
+      font-size: 22px;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    header span {
+      font-size: 12px;
+      color: var(--text2);
+      background: var(--surface2);
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
 
     /* ── Layout ── */
-    .layout { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 57px); }
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: calc(100vh - 57px);
+    }
 
     /* ── Sidebar ── */
     .sidebar {
@@ -58,7 +83,13 @@
       flex-direction: column;
       gap: 20px;
     }
-    .sidebar h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); }
+
+    .sidebar h2 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text2);
+    }
 
     .card {
       background: var(--surface2);
@@ -66,9 +97,16 @@
       border-radius: var(--radius);
       padding: 16px;
     }
-    .card label { font-size: 13px; color: var(--text2); display: block; margin-bottom: 8px; }
 
-    select, input[type="text"] {
+    .card label {
+      font-size: 13px;
+      color: var(--text2);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    select,
+    input[type="text"] {
       width: 100%;
       background: var(--bg);
       color: var(--text);
@@ -78,7 +116,11 @@
       font-size: 14px;
       outline: none;
     }
-    select:focus, input:focus { border-color: var(--blue); }
+
+    select:focus,
+    input:focus {
+      border-color: var(--blue);
+    }
 
     .upload-zone {
       border: 2px dashed var(--border);
@@ -88,11 +130,33 @@
       cursor: pointer;
       transition: border-color .2s, background .2s;
     }
-    .upload-zone:hover, .upload-zone.drag { border-color: var(--green); background: rgba(34,197,94,.05); }
-    .upload-zone .icon { font-size: 28px; margin-bottom: 8px; }
-    .upload-zone p { font-size: 13px; color: var(--text2); }
-    .upload-zone .filename { font-size: 12px; color: var(--green); margin-top: 6px; word-break: break-all; }
-    input[type="file"] { display: none; }
+
+    .upload-zone:hover,
+    .upload-zone.drag {
+      border-color: var(--green);
+      background: rgba(34, 197, 94, .05);
+    }
+
+    .upload-zone .icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .upload-zone p {
+      font-size: 13px;
+      color: var(--text2);
+    }
+
+    .upload-zone .filename {
+      font-size: 12px;
+      color: var(--green);
+      margin-top: 6px;
+      word-break: break-all;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
 
     .btn {
       width: 100%;
@@ -104,14 +168,40 @@
       cursor: pointer;
       transition: opacity .2s, transform .1s;
     }
-    .btn:active { transform: scale(.97); }
-    .btn-primary { background: var(--green); color: #000; }
-    .btn-primary:hover { opacity: .88; }
-    .btn-secondary { background: var(--blue); color: #fff; }
-    .btn-secondary:hover { opacity: .88; }
-    .btn:disabled { opacity: .4; cursor: not-allowed; }
 
-    .index-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .btn:active {
+      transform: scale(.97);
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      opacity: .88;
+    }
+
+    .btn-secondary {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .btn-secondary:hover {
+      opacity: .88;
+    }
+
+    .btn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+
+    .index-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
     .pill {
       padding: 4px 12px;
       border-radius: 20px;
@@ -122,37 +212,109 @@
       color: var(--text2);
       transition: all .15s;
     }
-    .pill.active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+
+    .pill.active {
+      background: var(--green-dim);
+      border-color: var(--green);
+      color: var(--green);
+    }
 
     /* ── Main content ── */
-    .main { padding: 28px; overflow-y: auto; }
-    .main h2 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+    .main {
+      padding: 28px;
+      overflow-y: auto;
+    }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .main h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
     .stat-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 14px 16px;
     }
-    .stat-card .label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .8px; }
-    .stat-card .value { font-size: 22px; font-weight: 700; margin-top: 4px; }
-    .stat-card .unit { font-size: 11px; color: var(--text2); }
 
-    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .stat-card .label {
+      font-size: 11px;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .stat-card .value {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .stat-card .unit {
+      font-size: 11px;
+      color: var(--text2);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
     .chart-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 18px;
     }
-    .chart-card h3 { font-size: 13px; color: var(--text2); margin-bottom: 14px; }
 
-    .class-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .class-bar .class-label { font-size: 12px; width: 90px; color: var(--text2); }
-    .class-bar .bar-track { flex: 1; height: 20px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
-    .class-bar .bar-fill { height: 100%; border-radius: 4px; transition: width .5s ease; }
-    .class-bar .count { font-size: 12px; width: 50px; text-align: right; color: var(--text2); }
+    .chart-card h3 {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 14px;
+    }
+
+    .class-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .class-bar .class-label {
+      font-size: 12px;
+      width: 90px;
+      color: var(--text2);
+    }
+
+    .class-bar .bar-track {
+      flex: 1;
+      height: 20px;
+      background: var(--surface2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .class-bar .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .5s ease;
+    }
+
+    .class-bar .count {
+      font-size: 12px;
+      width: 50px;
+      text-align: right;
+      color: var(--text2);
+    }
 
     .placeholder {
       display: flex;
@@ -163,8 +325,15 @@
       color: var(--text2);
       gap: 14px;
     }
-    .placeholder .big-icon { font-size: 48px; opacity: .4; }
-    .placeholder p { font-size: 14px; }
+
+    .placeholder .big-icon {
+      font-size: 48px;
+      opacity: .4;
+    }
+
+    .placeholder p {
+      font-size: 14px;
+    }
 
     .status-bar {
       background: var(--surface2);
@@ -175,11 +344,28 @@
       color: var(--text2);
       margin-bottom: 20px;
     }
-    .status-bar.loading { color: var(--amber); border-color: var(--amber); }
-    .status-bar.success { color: var(--green); border-color: var(--green); }
-    .status-bar.error { color: var(--red); border-color: var(--red); }
 
-    .tab-bar { display: flex; gap: 4px; margin-bottom: 24px; }
+    .status-bar.loading {
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+
+    .status-bar.success {
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .status-bar.error {
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+
     .tab {
       padding: 8px 18px;
       border-radius: 6px;
@@ -189,7 +375,12 @@
       color: var(--text2);
       background: none;
     }
-    .tab.active { background: var(--surface2); border-color: var(--border); color: var(--text); }
+
+    .tab.active {
+      background: var(--surface2);
+      border-color: var(--border);
+      color: var(--text);
+    }
 
     .api-url {
       background: var(--bg);
@@ -203,248 +394,254 @@
     }
   </style>
 </head>
+
 <body>
 
-<header>
-  <span class="logo">🌿</span>
-  <h1>Vegetation Index ML</h1>
-  <span>Remote Sensing · Random Forest</span>
-</header>
+  <header>
+    <span class="logo">🌿</span>
+    <h1>Vegetation Index ML</h1>
+    <span>Remote Sensing · Random Forest</span>
+  </header>
 
-<div class="layout">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div>
-      <h2>API Server</h2>
-      <div class="card">
-        <label>Backend URL</label>
-        <input type="text" id="api-url" value="http://localhost:8000" placeholder="http://localhost:8000"/>
-      </div>
-    </div>
-
-    <div>
-      <h2>Mode</h2>
-      <div class="tab-bar" style="margin:0">
-        <button class="tab active" onclick="setMode('index', this)">Compute Index</button>
-        <button class="tab" onclick="setMode('predict', this)">Predict Class</button>
-      </div>
-    </div>
-
-    <div>
-      <h2>Vegetation Index</h2>
-      <div class="index-pills">
-        <span class="pill active" onclick="selectIndex('NDVI', this)">NDVI</span>
-        <span class="pill" onclick="selectIndex('EVI', this)">EVI</span>
-        <span class="pill" onclick="selectIndex('SAVI', this)">SAVI</span>
-        <span class="pill" onclick="selectIndex('NDWI', this)">NDWI</span>
-        <span class="pill" onclick="selectIndex('MSAVI', this)">MSAVI</span>
-      </div>
-    </div>
-
-    <div>
-      <h2>Input File</h2>
-      <div class="card" style="padding:0">
-        <div style="display:flex;border-bottom:1px solid var(--border)">
-          <button class="tab active" id="tab-csv" onclick="setFileType('csv')" style="flex:1;border-radius:10px 0 0 0">CSV</button>
-          <button class="tab" id="tab-tiff" onclick="setFileType('tiff')" style="flex:1;border-radius:0 10px 0 0">GeoTIFF</button>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <h2>API Server</h2>
+        <div class="card">
+          <label>Backend URL</label>
+          <!-- <input type="text" id="api-url" value=# "http://localhost:8000" placeholder="http://localhost:8000"/> -->
+          <input type="text" id="api-url" value=# "https://veg-index-ml-api-production.up.railway.app"
+            placeholder="https://veg-index-ml-api-production.up.railway.app" />
         </div>
-        <div style="padding:14px">
-          <div class="upload-zone" onclick="document.getElementById('fileInput').click()"
-               ondragover="event.preventDefault();this.classList.add('drag')"
-               ondragleave="this.classList.remove('drag')"
-               ondrop="handleDrop(event)">
-            <div class="icon">📁</div>
-            <p>Click or drag file here</p>
-            <div class="filename" id="fname">No file selected</div>
+      </div>
+
+      <div>
+        <h2>Mode</h2>
+        <div class="tab-bar" style="margin:0">
+          <button class="tab active" onclick="setMode('index', this)">Compute Index</button>
+          <button class="tab" onclick="setMode('predict', this)">Predict Class</button>
+        </div>
+      </div>
+
+      <div>
+        <h2>Vegetation Index</h2>
+        <div class="index-pills">
+          <span class="pill active" onclick="selectIndex('NDVI', this)">NDVI</span>
+          <span class="pill" onclick="selectIndex('EVI', this)">EVI</span>
+          <span class="pill" onclick="selectIndex('SAVI', this)">SAVI</span>
+          <span class="pill" onclick="selectIndex('NDWI', this)">NDWI</span>
+          <span class="pill" onclick="selectIndex('MSAVI', this)">MSAVI</span>
+        </div>
+      </div>
+
+      <div>
+        <h2>Input File</h2>
+        <div class="card" style="padding:0">
+          <div style="display:flex;border-bottom:1px solid var(--border)">
+            <button class="tab active" id="tab-csv" onclick="setFileType('csv')"
+              style="flex:1;border-radius:10px 0 0 0">CSV</button>
+            <button class="tab" id="tab-tiff" onclick="setFileType('tiff')"
+              style="flex:1;border-radius:0 10px 0 0">GeoTIFF</button>
           </div>
-          <input type="file" id="fileInput" accept=".csv,.tif,.tiff" onchange="handleFile(this)"/>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn btn-primary" id="run-btn" onclick="runAnalysis()" disabled>
-      ▶ Run Analysis
-    </button>
-    <button class="btn btn-secondary" onclick="runAll()" id="all-btn" disabled>
-      ⚡ Compute All Indices
-    </button>
-  </aside>
-
-  <!-- Main -->
-  <main class="main">
-    <div id="status-bar" class="status-bar" style="display:none"></div>
-
-    <div id="placeholder" class="placeholder">
-      <div class="big-icon">🛰️</div>
-      <p>Upload a CSV or GeoTIFF and click Run Analysis</p>
-      <p style="font-size:12px;opacity:.6">Supports: NDVI · EVI · SAVI · NDWI · MSAVI · RF Land Cover</p>
-    </div>
-
-    <div id="results" style="display:none">
-      <!-- Stats -->
-      <h2 id="result-title">Results</h2>
-      <div class="stats-grid" id="stats-grid"></div>
-
-      <!-- Charts -->
-      <div class="charts-grid">
-        <div class="chart-card">
-          <h3 id="chart1-title">Histogram</h3>
-          <canvas id="histChart" height="180"></canvas>
-        </div>
-        <div class="chart-card">
-          <h3 id="chart2-title">Sample values (first 200)</h3>
-          <canvas id="lineChart" height="180"></canvas>
+          <div style="padding:14px">
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()"
+              ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')"
+              ondrop="handleDrop(event)">
+              <div class="icon">📁</div>
+              <p>Click or drag file here</p>
+              <div class="filename" id="fname">No file selected</div>
+            </div>
+            <input type="file" id="fileInput" accept=".csv,.tif,.tiff" onchange="handleFile(this)" />
+          </div>
         </div>
       </div>
 
-      <!-- Class distribution (for predict mode) -->
-      <div id="class-dist" style="margin-top:20px;display:none">
-        <div class="chart-card">
-          <h3>Land Cover Class Distribution</h3>
-          <div id="class-bars"></div>
-        </div>
+      <button class="btn btn-primary" id="run-btn" onclick="runAnalysis()" disabled>
+        ▶ Run Analysis
+      </button>
+      <button class="btn btn-secondary" onclick="runAll()" id="all-btn" disabled>
+        ⚡ Compute All Indices
+      </button>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div id="status-bar" class="status-bar" style="display:none"></div>
+
+      <div id="placeholder" class="placeholder">
+        <div class="big-icon">🛰️</div>
+        <p>Upload a CSV or GeoTIFF and click Run Analysis</p>
+        <p style="font-size:12px;opacity:.6">Supports: NDVI · EVI · SAVI · NDWI · MSAVI · RF Land Cover</p>
       </div>
 
-      <!-- All indices table -->
-      <div id="all-indices" style="margin-top:20px;display:none">
-        <div class="chart-card">
-          <h3>All Vegetation Indices Summary</h3>
-          <table id="indices-table" style="width:100%;border-collapse:collapse;font-size:13px">
-            <thead>
-              <tr style="color:var(--text2);border-bottom:1px solid var(--border)">
-                <th style="text-align:left;padding:8px 4px">Index</th>
-                <th style="padding:8px">Min</th><th style="padding:8px">Max</th>
-                <th style="padding:8px">Mean</th><th style="padding:8px">Std</th>
-              </tr>
-            </thead>
-            <tbody id="indices-tbody"></tbody>
-          </table>
+      <div id="results" style="display:none">
+        <!-- Stats -->
+        <h2 id="result-title">Results</h2>
+        <div class="stats-grid" id="stats-grid"></div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3 id="chart1-title">Histogram</h3>
+            <canvas id="histChart" height="180"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3 id="chart2-title">Sample values (first 200)</h3>
+            <canvas id="lineChart" height="180"></canvas>
+          </div>
+        </div>
+
+        <!-- Class distribution (for predict mode) -->
+        <div id="class-dist" style="margin-top:20px;display:none">
+          <div class="chart-card">
+            <h3>Land Cover Class Distribution</h3>
+            <div id="class-bars"></div>
+          </div>
+        </div>
+
+        <!-- All indices table -->
+        <div id="all-indices" style="margin-top:20px;display:none">
+          <div class="chart-card">
+            <h3>All Vegetation Indices Summary</h3>
+            <table id="indices-table" style="width:100%;border-collapse:collapse;font-size:13px">
+              <thead>
+                <tr style="color:var(--text2);border-bottom:1px solid var(--border)">
+                  <th style="text-align:left;padding:8px 4px">Index</th>
+                  <th style="padding:8px">Min</th>
+                  <th style="padding:8px">Max</th>
+                  <th style="padding:8px">Mean</th>
+                  <th style="padding:8px">Std</th>
+                </tr>
+              </thead>
+              <tbody id="indices-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  </main>
-</div>
+    </main>
+  </div>
 
-<script>
-  // State
-  let mode = 'index';
-  let fileType = 'csv';
-  let selectedIndex = 'NDVI';
-  let selectedFile = null;
-  let histChart = null, lineChart = null;
+  <script>
+    // State
+    let mode = 'index';
+    let fileType = 'csv';
+    let selectedIndex = 'NDVI';
+    let selectedFile = null;
+    let histChart = null, lineChart = null;
 
-  const CLASS_NAMES = { 0:'Water', 1:'Forest', 2:'Agriculture', 3:'Urban', 4:'Bare Soil' };
-  const CLASS_COLORS = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#a78bfa'];
+    const CLASS_NAMES = { 0: 'Water', 1: 'Forest', 2: 'Agriculture', 3: 'Urban', 4: 'Bare Soil' };
+    const CLASS_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#a78bfa'];
 
-  function api() { return document.getElementById('api-url').value.replace(/\/$/, ''); }
+    function api() { return document.getElementById('api-url').value.replace(/\/$/, ''); }
 
-  function setMode(m, el) {
-    mode = m;
-    document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-  }
-
-  function setFileType(t) {
-    fileType = t;
-    document.getElementById('tab-csv').classList.toggle('active', t === 'csv');
-    document.getElementById('tab-tiff').classList.toggle('active', t === 'tiff');
-    document.getElementById('fileInput').accept = t === 'csv' ? '.csv' : '.tif,.tiff';
-  }
-
-  function selectIndex(idx, el) {
-    selectedIndex = idx;
-    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-  }
-
-  function handleFile(input) {
-    if (input.files[0]) {
-      selectedFile = input.files[0];
-      document.getElementById('fname').textContent = selectedFile.name;
-      document.getElementById('run-btn').disabled = false;
-      document.getElementById('all-btn').disabled = false;
+    function setMode(m, el) {
+      mode = m;
+      document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
     }
-  }
 
-  function handleDrop(e) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('drag');
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      selectedFile = file;
-      document.getElementById('fname').textContent = file.name;
-      document.getElementById('run-btn').disabled = false;
-      document.getElementById('all-btn').disabled = false;
+    function setFileType(t) {
+      fileType = t;
+      document.getElementById('tab-csv').classList.toggle('active', t === 'csv');
+      document.getElementById('tab-tiff').classList.toggle('active', t === 'tiff');
+      document.getElementById('fileInput').accept = t === 'csv' ? '.csv' : '.tif,.tiff';
     }
-  }
 
-  function setStatus(msg, type='') {
-    const bar = document.getElementById('status-bar');
-    bar.textContent = msg;
-    bar.className = 'status-bar ' + type;
-    bar.style.display = msg ? 'block' : 'none';
-  }
+    function selectIndex(idx, el) {
+      selectedIndex = idx;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+    }
 
-  async function runAnalysis() {
-    if (!selectedFile) return;
-    setStatus('⏳ Running analysis...', 'loading');
-    document.getElementById('placeholder').style.display = 'none';
-    document.getElementById('results').style.display = 'none';
-    document.getElementById('class-dist').style.display = 'none';
-    document.getElementById('all-indices').style.display = 'none';
-
-    const fd = new FormData();
-    fd.append('file', selectedFile);
-
-    try {
-      let endpoint, url;
-      if (mode === 'predict') {
-        endpoint = '/predict/csv';
-        url = `${api()}${endpoint}`;
-      } else {
-        endpoint = fileType === 'csv' ? '/compute-index/csv' : '/compute-index/geotiff';
-        url = `${api()}${endpoint}?index=${selectedIndex}`;
+    function handleFile(input) {
+      if (input.files[0]) {
+        selectedFile = input.files[0];
+        document.getElementById('fname').textContent = selectedFile.name;
+        document.getElementById('run-btn').disabled = false;
+        document.getElementById('all-btn').disabled = false;
       }
-
-      const res = await fetch(url, { method: 'POST', body: fd });
-      if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Server error'); }
-      const data = await res.json();
-
-      if (mode === 'predict') { renderPredict(data); }
-      else { renderIndex(data); }
-
-      setStatus(`✅ Done — ${new Date().toLocaleTimeString()}`, 'success');
-    } catch(err) {
-      setStatus(`❌ Error: ${err.message}`, 'error');
     }
-  }
 
-  async function runAll() {
-    if (!selectedFile) return;
-    if (fileType !== 'csv') { setStatus('ℹ️ Compute All Indices is supported for CSV files only.', ''); return; }
-    setStatus('⏳ Computing all indices...', 'loading');
-    document.getElementById('placeholder').style.display = 'none';
-
-    const fd = new FormData();
-    fd.append('file', selectedFile);
-
-    try {
-      const res = await fetch(`${api()}/compute-all/csv`, { method: 'POST', body: fd });
-      if (!res.ok) throw new Error('Server error');
-      const data = await res.json();
-      renderAllIndices(data.indices);
-      setStatus(`✅ All indices computed — ${new Date().toLocaleTimeString()}`, 'success');
-    } catch(err) {
-      setStatus(`❌ Error: ${err.message}`, 'error');
+    function handleDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        selectedFile = file;
+        document.getElementById('fname').textContent = file.name;
+        document.getElementById('run-btn').disabled = false;
+        document.getElementById('all-btn').disabled = false;
+      }
     }
-  }
 
-  function renderIndex(data) {
-    document.getElementById('results').style.display = 'block';
-    document.getElementById('result-title').textContent = `${data.index} Analysis`;
+    function setStatus(msg, type = '') {
+      const bar = document.getElementById('status-bar');
+      bar.textContent = msg;
+      bar.className = 'status-bar ' + type;
+      bar.style.display = msg ? 'block' : 'none';
+    }
 
-    const s = data.stats;
-    document.getElementById('stats-grid').innerHTML = `
+    async function runAnalysis() {
+      if (!selectedFile) return;
+      setStatus('⏳ Running analysis...', 'loading');
+      document.getElementById('placeholder').style.display = 'none';
+      document.getElementById('results').style.display = 'none';
+      document.getElementById('class-dist').style.display = 'none';
+      document.getElementById('all-indices').style.display = 'none';
+
+      const fd = new FormData();
+      fd.append('file', selectedFile);
+
+      try {
+        let endpoint, url;
+        if (mode === 'predict') {
+          endpoint = '/predict/csv';
+          url = `${api()}${endpoint}`;
+        } else {
+          endpoint = fileType === 'csv' ? '/compute-index/csv' : '/compute-index/geotiff';
+          url = `${api()}${endpoint}?index=${selectedIndex}`;
+        }
+
+        const res = await fetch(url, { method: 'POST', body: fd });
+        if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'Server error'); }
+        const data = await res.json();
+
+        if (mode === 'predict') { renderPredict(data); }
+        else { renderIndex(data); }
+
+        setStatus(`✅ Done — ${new Date().toLocaleTimeString()}`, 'success');
+      } catch (err) {
+        setStatus(`❌ Error: ${err.message}`, 'error');
+      }
+    }
+
+    async function runAll() {
+      if (!selectedFile) return;
+      if (fileType !== 'csv') { setStatus('ℹ️ Compute All Indices is supported for CSV files only.', ''); return; }
+      setStatus('⏳ Computing all indices...', 'loading');
+      document.getElementById('placeholder').style.display = 'none';
+
+      const fd = new FormData();
+      fd.append('file', selectedFile);
+
+      try {
+        const res = await fetch(`${api()}/compute-all/csv`, { method: 'POST', body: fd });
+        if (!res.ok) throw new Error('Server error');
+        const data = await res.json();
+        renderAllIndices(data.indices);
+        setStatus(`✅ All indices computed — ${new Date().toLocaleTimeString()}`, 'success');
+      } catch (err) {
+        setStatus(`❌ Error: ${err.message}`, 'error');
+      }
+    }
+
+    function renderIndex(data) {
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('result-title').textContent = `${data.index} Analysis`;
+
+      const s = data.stats;
+      document.getElementById('stats-grid').innerHTML = `
       <div class="stat-card"><div class="label">Min</div><div class="value" style="color:var(--blue)">${s.min}</div></div>
       <div class="stat-card"><div class="label">Max</div><div class="value" style="color:var(--amber)">${s.max}</div></div>
       <div class="stat-card"><div class="label">Mean</div><div class="value" style="color:var(--green)">${s.mean}</div></div>
@@ -453,82 +650,91 @@
       <div class="stat-card"><div class="label">P75</div><div class="value">${s.percentile_75}</div></div>
     `;
 
-    // Histogram
-    if (histChart) histChart.destroy();
-    const hCtx = document.getElementById('histChart').getContext('2d');
-    const labels = data.histogram_edges.slice(0,-1).map(v => v.toFixed(2));
-    histChart = new Chart(hCtx, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{ label: data.index, data: data.histogram,
-          backgroundColor: 'rgba(34,197,94,.5)', borderColor: '#22c55e', borderWidth: 1 }]
-      },
-      options: { plugins: { legend: { display: false } }, scales: {
-        x: { ticks: { color: '#8b8fa8', maxTicksLimit: 8 }, grid: { color: '#2e3248' } },
-        y: { ticks: { color: '#8b8fa8' }, grid: { color: '#2e3248' } }
-      }}
-    });
+      // Histogram
+      if (histChart) histChart.destroy();
+      const hCtx = document.getElementById('histChart').getContext('2d');
+      const labels = data.histogram_edges.slice(0, -1).map(v => v.toFixed(2));
+      histChart = new Chart(hCtx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: data.index, data: data.histogram,
+            backgroundColor: 'rgba(34,197,94,.5)', borderColor: '#22c55e', borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } }, scales: {
+            x: { ticks: { color: '#8b8fa8', maxTicksLimit: 8 }, grid: { color: '#2e3248' } },
+            y: { ticks: { color: '#8b8fa8' }, grid: { color: '#2e3248' } }
+          }
+        }
+      });
 
-    // Line chart
-    if (lineChart) lineChart.destroy();
-    const lCtx = document.getElementById('lineChart').getContext('2d');
-    lineChart = new Chart(lCtx, {
-      type: 'line',
-      data: {
-        labels: data.sample_values.slice(0,200).map((_,i)=>i),
-        datasets: [{ label: data.index, data: data.sample_values.slice(0,200),
-          borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.1)',
-          borderWidth: 1.2, pointRadius: 0, fill: true }]
-      },
-      options: { plugins: { legend: { display: false } }, scales: {
-        x: { display: false },
-        y: { ticks: { color: '#8b8fa8' }, grid: { color: '#2e3248' } }
-      }}
-    });
-  }
+      // Line chart
+      if (lineChart) lineChart.destroy();
+      const lCtx = document.getElementById('lineChart').getContext('2d');
+      lineChart = new Chart(lCtx, {
+        type: 'line',
+        data: {
+          labels: data.sample_values.slice(0, 200).map((_, i) => i),
+          datasets: [{
+            label: data.index, data: data.sample_values.slice(0, 200),
+            borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.1)',
+            borderWidth: 1.2, pointRadius: 0, fill: true
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } }, scales: {
+            x: { display: false },
+            y: { ticks: { color: '#8b8fa8' }, grid: { color: '#2e3248' } }
+          }
+        }
+      });
+    }
 
-  function renderPredict(data) {
-    document.getElementById('results').style.display = 'block';
-    document.getElementById('result-title').textContent = 'Land Cover Prediction';
+    function renderPredict(data) {
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('result-title').textContent = 'Land Cover Prediction';
 
-    document.getElementById('stats-grid').innerHTML = `
+      document.getElementById('stats-grid').innerHTML = `
       <div class="stat-card"><div class="label">Samples</div><div class="value" style="color:var(--green)">${data.n_samples}</div></div>
       <div class="stat-card"><div class="label">Classes</div><div class="value" style="color:var(--blue)">${Object.keys(data.class_distribution).length}</div></div>
     `;
 
-    document.getElementById('class-dist').style.display = 'block';
-    const total = Object.values(data.class_distribution).reduce((a,b)=>a+b, 0);
-    const bars = Object.entries(data.class_distribution).map(([cls, count]) => {
-      const pct = (count/total*100).toFixed(1);
-      const color = CLASS_COLORS[parseInt(cls)] || '#8b8fa8';
-      const name = CLASS_NAMES[parseInt(cls)] || `Class ${cls}`;
-      return `<div class="class-bar">
+      document.getElementById('class-dist').style.display = 'block';
+      const total = Object.values(data.class_distribution).reduce((a, b) => a + b, 0);
+      const bars = Object.entries(data.class_distribution).map(([cls, count]) => {
+        const pct = (count / total * 100).toFixed(1);
+        const color = CLASS_COLORS[parseInt(cls)] || '#8b8fa8';
+        const name = CLASS_NAMES[parseInt(cls)] || `Class ${cls}`;
+        return `<div class="class-bar">
         <span class="class-label">${name}</span>
         <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
         <span class="count">${count} (${pct}%)</span>
       </div>`;
-    }).join('');
-    document.getElementById('class-bars').innerHTML = bars;
-  }
+      }).join('');
+      document.getElementById('class-bars').innerHTML = bars;
+    }
 
-  function renderAllIndices(indices) {
-    document.getElementById('results').style.display = 'block';
-    document.getElementById('all-indices').style.display = 'block';
-    document.getElementById('stats-grid').innerHTML = '';
+    function renderAllIndices(indices) {
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('all-indices').style.display = 'block';
+      document.getElementById('stats-grid').innerHTML = '';
 
-    const tbody = document.getElementById('indices-tbody');
-    tbody.innerHTML = Object.entries(indices).map(([name, s]) =>
-      s.error ? `<tr><td style="padding:8px 4px;color:var(--text2)">${name}</td><td colspan="4" style="color:var(--red);font-size:12px">${s.error}</td></tr>` :
-      `<tr style="border-bottom:1px solid var(--border)">
+      const tbody = document.getElementById('indices-tbody');
+      tbody.innerHTML = Object.entries(indices).map(([name, s]) =>
+        s.error ? `<tr><td style="padding:8px 4px;color:var(--text2)">${name}</td><td colspan="4" style="color:var(--red);font-size:12px">${s.error}</td></tr>` :
+          `<tr style="border-bottom:1px solid var(--border)">
         <td style="padding:8px 4px;font-weight:600;color:var(--green)">${name}</td>
         <td style="padding:8px;text-align:center">${s.min}</td>
         <td style="padding:8px;text-align:center">${s.max}</td>
         <td style="padding:8px;text-align:center">${s.mean}</td>
         <td style="padding:8px;text-align:center">${s.std}</td>
       </tr>`
-    ).join('');
-  }
-</script>
+      ).join('');
+    }
+  </script>
 </body>
+
 </html>
